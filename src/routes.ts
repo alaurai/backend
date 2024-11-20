@@ -824,7 +824,6 @@ export function RegisterRoutes(app: Router) {
 
             async function BookClubClassAPI_getAvailableClasses(request: any, response: any, next: any) {
             const args = {
-                    idvol: {"in":"path","name":"idvol","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -842,6 +841,37 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.getAvailableClasses.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, 200, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/book-club-class/reserved/:idvol',
+            authenticateMiddleware([{"jwt":["bookPermission"]}]),
+            ...(fetchMiddlewares<RequestHandler>(BookClubClassAPI)),
+            ...(fetchMiddlewares<RequestHandler>(BookClubClassAPI.prototype.getReservedClasses)),
+
+            async function BookClubClassAPI_getReservedClasses(request: any, response: any, next: any) {
+            const args = {
+                    idvol: {"in":"path","name":"idvol","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<BookClubClassAPI>(BookClubClassAPI);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+
+              const promise = controller.getReservedClasses.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, 200, next);
             } catch (err) {
                 return next(err);

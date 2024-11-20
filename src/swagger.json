@@ -3023,6 +3023,78 @@
 					}
 				},
 				"description": "Get available essays for evaluation for the volunteer,\nthose essays includes the ones which does not have a reservation date\nor the reservations of the volunteer.\n\n(The volunteer must have bookPermission, which is checked using JWT)",
+<<<<<<< HEAD
+				"tags": [
+					"Book Club Class"
+				],
+				"security": [
+					{
+						"jwt": [
+							"bookPermission"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/book-club-class/reserved/{idvol}": {
+			"get": {
+				"operationId": "GetReservedClasses",
+				"responses": {
+					"200": {
+						"description": "Successfully fetched the essays",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/AvailableClassRowEntity"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"details": {
+											"$ref": "#/components/schemas/FieldErrors"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"details",
+										"message"
+									],
+									"type": "object"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "Validation Failed",
+											"details": {
+												"exampleField1": {
+													"message": "invalid string value",
+													"value": 12
+												},
+												"exampleField2": {
+													"message": "'exampleField2' is required"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+=======
+>>>>>>> f55015920732b992ab42e7cda7690efb2f4a0933
 				"tags": [
 					"Book Club Class"
 				],
