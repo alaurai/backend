@@ -82,7 +82,7 @@ export class NotebookAPI extends Controller {
    */
 
   @Get('/evaluation-list')
-  @Security('jwt', ['readPermission'])
+  @Security('jwt')
   @Middlewares(paginationMiddleware)
   @SuccessResponse(200, 'Successfully fetched the notebooks')
   async getNotebooksEvaluation(
@@ -101,7 +101,7 @@ export class NotebookAPI extends Controller {
    */
 
   @Get('/evaluation-list/download')
-  @Security('jwt', ['readPermission'])
+  @Security('jwt')
   @Middlewares(paginationMiddleware)
   @SuccessResponse(200, 'Successfully fetched the notebooks')
   async getNotebooksEvaluationDownload(

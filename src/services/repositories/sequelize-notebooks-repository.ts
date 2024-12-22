@@ -14,7 +14,7 @@ import {
 import { provideSingleton } from '@src/helpers/provide-singleton';
 import { PaginationParams } from '@src/presentation/types/paginationParams';
 import moment from 'moment';
-import { FindOptions, Op, Sequelize } from 'sequelize';
+import { FindOptions, Op, QueryTypes } from 'sequelize';
 import {
   evaluateNotebookEntityToEvaluateNotebookModel,
   evalutionListNotebookModelToEntity,
@@ -27,6 +27,7 @@ import { Notebook } from '../database/models/notebook';
 import { Place } from '../database/models/place';
 import { Volunteer } from '../database/models/volunteer';
 import { wrapPagination } from './helpers/wrapPagination';
+import sequelize from '../database/sequelize';
 
 @provideSingleton(SequelizeNotebookRepository)
 export class SequelizeNotebookRepository implements NotebookRepository {
@@ -193,30 +194,25 @@ export class SequelizeNotebookRepository implements NotebookRepository {
   }
 
   async getReflections(date: string): Promise<RecletionsReturnType[]> {
-    const notebooks = await Notebook.findAll({
-      attributes: [
-        [Sequelize.col('nome do(a) aluno(a)'), 'nome do(a) aluno(a)'],
-        [
-          Sequelize.col('número de matrícula do(a) aluno(a)'),
-          'número de matrícula do(a) aluno(a)'
-        ],
-        [
-          Sequelize.col('unidade prisional do(a) aluno(a)'),
-          'unidade prisional do(a) aluno(a)'
-        ],
-        [Sequelize.col('conteúdos relevantes'), 'conteúdos relevantes']
-      ],
-      where: {
-        'Carimbo de data/hora': { [Op.gt]: date },
-        'conteúdos relevantes': { [Op.not]: null }
+    const notebooks = await sequelize.query<RecletionsReturnType>(
+      `
+      SELECT 
+          c.\`NOME DO(A) ALUNO(A)\` AS name, 
+          c.\`NÚMERO DE MATRÍCULA DO(A) ALUNO(A)\` AS registration, 
+          pl.FullName AS prisonUnit, 
+          c.\`CONTEÚDOS RELEVANTES\` AS relevantContents
+      FROM Cadernos c
+      INNER JOIN Pep pe ON c.IDPEP = pe.ID
+      LEFT JOIN Place pl ON pe.IDPlace = pl.ID
+      WHERE c.\`Carimbo de data/hora\` > :date
+      AND c.\`CONTEÚDOS RELEVANTES\` IS NOT NULL
+    `,
+      {
+        replacements: { date },
+        type: QueryTypes.SELECT
       }
-    });
+    );
 
-    return notebooks.map((n) => ({
-      name: n.getDataValue('nome do(a) aluno(a)'),
-      registration: n.getDataValue('número de matrícula do(a) aluno(a)'),
-      prisonUnit: n.getDataValue('unidade prisional do(a) aluno(a)'),
-      relevantContents: n.getDataValue('conteúdos relevantes')
-    }));
+    return notebooks;
   }
 }

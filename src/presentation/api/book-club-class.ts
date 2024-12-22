@@ -104,7 +104,7 @@ export class BookClubClassAPI extends Controller {
    * (The volunteer must have bookPermission, which is checked using JWT)
    */
   @Get('download/{idclass}')
-  @Security('jwt', ['bookPermission'])
+  @Security('jwt')
   @SuccessResponse(200, 'Successfully downloaded the files')
   @Response<BookClubClassError>(404, 'Essay not found', {
     name: 'ESSAY_NOT_FOUND',
